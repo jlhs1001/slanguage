@@ -27,17 +27,30 @@ enum class TokenType {
     END_OF_FILE
 };
 
+// Defines a Token class that represents lexical tokens in the source code.
+// A token is a sequence of characters that form a single, indivisible unit of meaning.
+// The Token class encapsulates the type of the token, the start and length of the token in the source code,
 class Token {
 public:
+    // The type of the token, e.g., keyword, identifier, literal, etc.
     TokenType type;
+    // A pointer to the start of the token in the source code.
     const char *start;
+    // The length of the token in the source code.
     int length;
+    // The line number of the token in the source code.
     int line;
 
+    // Constructor for creating a new Token instance.
+    // Initializes the token with the specified type, start, length, and line number.
     Token(
+            // The type of token.
             TokenType type,
+            // A pointer to the start of the token in the source code.
             const char *start,
+            // The length of the token in the source code.
             int length,
+            // The line number of the token in the source code.
             int line
     ) : type(type), start(start), length(length), line(line) {}
 };
