@@ -3,6 +3,8 @@ project(slang)
 
 set(CMAKE_CXX_STANDARD 17)
 
+include_directories(compiler/Lexer)
+
 add_executable(slang compiler/main.cpp
         compiler/Lexer/Lexer.h
         compiler/Lexer/Lexer.cpp

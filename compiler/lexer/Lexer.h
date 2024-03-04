@@ -12,7 +12,12 @@
 
 
 class Lexer {
+public:
     std::string source;
+    unsigned int line;
+
+    const char *start;
+    const char *current;
 public:
     // Reads the entire contents of a file into a string.
     //
@@ -36,10 +41,10 @@ public:
     //
     static std::string readFile(const std::string &path);
 public:
-    Lexer(const std::string& sourcePath);
+    explicit Lexer(const std::string& sourcePath);
     ~Lexer();
 
-
+    char advance();
 private:
 };
 
