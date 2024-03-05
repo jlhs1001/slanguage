@@ -20,8 +20,9 @@ enum class TokenType {
     IDENTIFIER, STRING, NUMBER,
 
     // Keywords.
-    AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
-    PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+    AND, CLASS, ELSE, FALSE, FN, FOR, IF, NIL, OR,
+    PRINTLN, RETURN, SUPER, SELF, TRUE, LET, WHILE,
+    IN,
 
     // End of file.
     END_OF_FILE
@@ -35,23 +36,24 @@ public:
     // The type of the token, e.g., keyword, identifier, literal, etc.
     TokenType type;
     // A pointer to the start of the token in the source code.
-    const char *start;
+    std::string::const_iterator start;
     // The length of the token in the source code.
     int length;
     // The line number of the token in the source code.
-    int line;
+    unsigned int line;
 
+public:
     // Constructor for creating a new Token instance.
     // Initializes the token with the specified type, start, length, and line number.
     Token(
             // The type of token.
             TokenType type,
             // A pointer to the start of the token in the source code.
-            const char *start,
+            std::string::const_iterator start,
             // The length of the token in the source code.
             int length,
             // The line number of the token in the source code.
-            int line
+            unsigned int line
     ) : type(type), start(start), length(length), line(line) {}
 };
 

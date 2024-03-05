@@ -25,6 +25,15 @@ std::string Lexer::readFile(const std::string &path) {
     };
 }
 
+Token Lexer::makeToken(TokenType type) const {
+    return {
+        type,
+        lexemeStart,
+        static_cast<int>(current - lexemeStart),
+        line
+    };
+}
+
 Lexer::Lexer(const std::string& sourcePath) {
     // Load the source code from the file into a string.
     source = readFile(sourcePath);
@@ -96,6 +105,129 @@ inline void Lexer::skipWhitespace() {
                 return;
         }
     }
+}
+
+Token Lexer::getNextToken() {
+    // Skip over any whitespace characters in the source code.
+    skipWhitespace();
+
+    // Set the start of the lexeme to the current character.
+    lexemeStart = current;
+
+    // If the current character is the end of the source code, return an EOF token.
+    if (IS_EOF(*current)) return Token{TokenType::END_OF_FILE, lexemeStart, 0, line};
+
+    // Advance the current character to the next character in the source code.
+    char c = advance();
+
+    // Lex identifiers
+    if (IS_VALID_ID(c)) {
+        // Consume the rest of the identifier.
+        while (IS_VALID_ID(peek()) || IS_DIGIT(peek())) advance();
+
+        // Return the token for the identifier.
+        return makeToken(identifierType());
+    }
+
+    // Lex numeric literals
+    if (IS_DIGIT(c)) {
+        // TODO: For the sake of consistency, perhaps split this into a separate function.
+        //  However, this is a simple enough case that it's not necessary. Eventually, the lexer
+        //  will support hex literals, scientific notation, and other numeric formats.
+
+        // Consume the rest of the numeric literal.
+        while (IS_DIGIT(peek())) advance();
+
+        // Look for a decimal point.
+        if (peek() == '.' && IS_DIGIT(peekNext())) {
+            // Consume the '.'.
+            advance();
+
+            // Consume the rest of the numeric literal.
+            while (IS_DIGIT(peek())) advance();
+        }
+
+        // Return the token for the numeric literal.
+        return makeToken(TokenType::NUMBER);
+    }
+
+    // Lex single-character tokens
+}
+
+TokenType Lexer::identifierType() {
+    // This is a bit unorthodox in manner of appearance, bit it's a simple DFA
+    // that determines the type of the identifier based on its lexeme.
+
+    // Cache the first and second characters of the lexeme.
+    // Based on the slang grammar, only the first two characters are needed to determine the type.
+    char first = lexemeStart[0];
+    char second = lexemeStart[1];
+
+    // check if the identifier is a keyword
+    switch (first) {
+        case 'a':
+            return checkKeyword(1, 2, "nd", TokenType::AND);
+        case 'c':
+            return checkKeyword(1, 4, "lass", TokenType::CLASS);
+        case 'e':
+            return checkKeyword(1, 3, "lse", TokenType::ELSE);
+        case 'f':
+            if (current - lexemeStart > 1) {
+                switch (second) {
+                    case 'n':
+                        return checkKeyword(2, 1, "n", TokenType::FN);
+                    case 'o':
+                        return checkKeyword(2, 1, "r", TokenType::FOR);
+                    case 'a':
+                        return checkKeyword(2, 3, "lse", TokenType::FALSE);
+                }
+            }
+            break;
+        case 'i':
+            if (current - lexemeStart > 1) {
+                switch (second) {
+                    case 'f':
+                        return checkKeyword(2, 0, "", TokenType::IF);
+                    case 'n':
+                        return checkKeyword(2, 0, "", TokenType::IN);
+                }
+            }
+        case 'l':
+            return checkKeyword(1, 2, "et", TokenType::LET);
+        case 'n':
+            return checkKeyword(1, 3, "ull", TokenType::NIL);
+        case 'o':
+            return checkKeyword(1, 1, "r", TokenType::OR);
+        case 'p':
+            return checkKeyword(1, 6, "rintln", TokenType::PRINTLN);
+        case 'r':
+            return checkKeyword(1, 5, "eturn", TokenType::RETURN);
+        case 's':
+            if (current - lexemeStart > 1) {
+                switch (second) {
+                    case 'u':
+                        return checkKeyword(2, 4, "per", TokenType::SUPER);
+                    case 'e':
+                        return checkKeyword(2, 2, "lf", TokenType::SELF);
+                }
+            }
+            break;
+        case 't':
+            return checkKeyword(1, 3, "rue", TokenType::TRUE);
+        case 'w':
+            return checkKeyword(1, 4, "hile", TokenType::WHILE);
+    }
+
+    return TokenType::IDENTIFIER;
+}
+
+TokenType Lexer::checkKeyword(int start, int length, const std::string &rest, TokenType type) {
+    if (current - lexemeStart == start + length &&
+        std::equal(lexemeStart + start, lexemeStart + start + length, rest.begin())) {
+        return type;
+    }
+
+    return TokenType::IDENTIFIER;
 }
 
 Lexer::~Lexer() = default;

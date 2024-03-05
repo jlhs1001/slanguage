@@ -4,11 +4,14 @@
 
 #ifndef SLANG_LEXER_H
 #define SLANG_LEXER_H
+
 #include <string>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <sstream>
+
+#include "Token.h"
 
 
 // Represents the lexical analyzer for the slang compiler.
@@ -47,6 +50,9 @@ public:
     //  std::string source = Lexer::readFile("path/to/file.sl");
     //
     static std::string readFile(const std::string &path);
+
+    Token makeToken(TokenType type) const;
+
 public:
     // Constructs a Lexer instance with the source code from the specified file.
     // The source code is read from the specified path, and lexical analysis begins from
@@ -54,7 +60,7 @@ public:
     //
     // Parameters:
     //  sourcePath - A string specifying the path to the source code file.
-    explicit Lexer(const std::string& sourcePath);
+    explicit Lexer(const std::string &sourcePath);
 
     // Destructor for the Lexer class.
     ~Lexer();
@@ -86,10 +92,22 @@ public:
     // without consuming it, supporting more complex lexical analysis requirements.
     [[nodiscard]] char peekNext() const;
 
+public:
+    Token getNextToken();
+
 private:
     // Skips over any whitespace characters in the source code, such as spaces, tabs, and carriage returns.
     // This method is used to ignore whitespace characters that do not contribute to the meaning of the source code.
     void skipWhitespace();
+
+    TokenType checkKeyword(
+            int start,
+            int length,
+            const std::string &rest,
+            TokenType type
+    );
+
+    TokenType identifierType();
 };
 
 
