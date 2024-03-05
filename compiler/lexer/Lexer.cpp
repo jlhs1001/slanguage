@@ -1,7 +1,7 @@
 //
 // Created by Liam Seewald on 3/4/24.
 //
-
+// TODO: Add informative comments to the implementation file.
 #include "Lexer.h"
 #include "Utils.h"
 #include <iostream>
@@ -57,6 +57,45 @@ inline char Lexer::peek() const {
 char Lexer::peekNext() const {
     if (IS_EOF(*current)) return '\0';
     return current[1];
+}
+
+inline void Lexer::skipWhitespace() {
+    for (;;) {
+        char c = peek();
+        switch (c) {
+            case ' ':
+            case '\r':
+            case '\t':
+                advance();
+                break;
+            case '\n':
+                line++;
+                advance();
+                break;
+            case '/':
+                if (peekNext() == '/') {
+                    while (peek() != '\n' && !IS_EOF(peek())) advance();
+                } else if (peekNext() == '*') {
+                    advance();
+                    advance();
+                    while (peek() != '*' && peekNext() != '/' && !IS_EOF(peek())) {
+                        if (peek() == '\n') line++;
+                        advance();
+                    }
+                    if (IS_EOF(peek())) {
+                        std::cerr << "Unterminated block comment at line " << line << std::endl;
+                    } else {
+                        advance();
+                        advance();
+                    }
+                } else {
+                    return;
+                }
+                break;
+            default:
+                return;
+        }
+    }
 }
 
 Lexer::~Lexer() = default;

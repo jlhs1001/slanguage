@@ -87,6 +87,9 @@ public:
     [[nodiscard]] char peekNext() const;
 
 private:
+    // Skips over any whitespace characters in the source code, such as spaces, tabs, and carriage returns.
+    // This method is used to ignore whitespace characters that do not contribute to the meaning of the source code.
+    void skipWhitespace();
 };
 
 
