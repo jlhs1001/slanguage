@@ -3,7 +3,9 @@
 
 int main() {
     Lexer lexer("../tests/main.sl");
-//    lexer.advance();
+    lexer.advance();
+
+//    std::cout << *lexer.current << std::endl;
 
     std::cout << lexer.source << std::endl;
 }

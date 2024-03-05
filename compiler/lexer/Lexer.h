@@ -11,13 +11,21 @@
 #include <sstream>
 
 
+// Represents the lexical analyzer for the slang compiler.
+// The Lexer class is responsible for converting a sequence of source characters
+// into a sequence of tokens. These tokens are then used by the parser to build
+// an abstract syntax tree (AST) that represents the structure of the source code.
 class Lexer {
 public:
+    // Holds the entire source code as a string.
     std::string source;
+
+    // The current line number in the source code.
     unsigned int line;
 
-    const char *start;
-    const char *current;
+    // I'm going to make start an iterator.
+    std::string::const_iterator lexemeStart;
+    std::string::const_iterator current;
 public:
     // Reads the entire contents of a file into a string.
     //
@@ -45,6 +53,9 @@ public:
     ~Lexer();
 
     char advance();
+    bool match(char expected);
+    [[nodiscard]] char peek() const;
+    [[nodiscard]] char peekNext() const;
 private:
 };
 

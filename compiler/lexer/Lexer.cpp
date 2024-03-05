@@ -3,6 +3,7 @@
 //
 
 #include "Lexer.h"
+#include "Utils.h"
 #include <iostream>
 
 std::string Lexer::readFile(const std::string &path) {
@@ -27,11 +28,35 @@ std::string Lexer::readFile(const std::string &path) {
 Lexer::Lexer(const std::string& sourcePath) {
     // Load the source code from the file into a string.
     source = readFile(sourcePath);
+
+    // Initialize the line number to 1 and the current
+    // character to the beginning of the source code.
+    line = 1;
+    lexemeStart = source.begin();
+
+    // Set the current iterator to the beginning of the source code.
+    current = source.begin();
 }
 
 char Lexer::advance() {
     current++;
     return current[-1];
+}
+
+bool Lexer::match(char expected) {
+    if (IS_EOF(*current) || *current != expected) return false;
+
+    current++;
+    return true;
+}
+
+inline char Lexer::peek() const {
+    return *current;
+}
+
+char Lexer::peekNext() const {
+    if (IS_EOF(*current)) return '\0';
+    return current[1];
 }
 
 Lexer::~Lexer() = default;
