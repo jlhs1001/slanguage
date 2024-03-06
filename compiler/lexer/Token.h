@@ -5,6 +5,8 @@
 #ifndef SLANG_TOKEN_H
 #define SLANG_TOKEN_H
 
+#include <string>
+
 enum class TokenType {
     // Single-character tokens.
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
@@ -43,6 +45,7 @@ public:
     unsigned int line;
 
 public:
+    Token() = default;
     // Constructor for creating a new Token instance.
     // Initializes the token with the specified type, start, length, and line number.
     Token(
