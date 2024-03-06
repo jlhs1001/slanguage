@@ -1,0 +1,72 @@
+<program> ::= <statement>*
+
+<statement> ::= <var-declaration>
+              | <function-declaration>
+              | <expression-statement>
+              | <if-statement>
+              | <for-loop>
+              | <while-loop>
+              | <print-statement>
+
+<var-declaration> ::= "let" <identifier> "=" <expression>
+                    | "let" <identifier>
+
+<function-declaration> ::= "fn" <identifier> "(" <params> ")" "{" <statement>* "}"
+
+<params> ::= <identifier> ("," <identifier>)*
+           | ε
+
+<expression-statement> ::= <expression>
+
+<expression> ::= <literal>
+               | <identifier>
+               | <function-call>
+               | <list>
+               | <expression> <operator> <expression>
+               | "(" <expression> ")"
+               | <expression> "[" <expression> "]"
+               | <identifier> "=" <expression>
+
+<function-call> ::= <identifier> "(" <arguments> ")"
+
+<arguments> ::= <expression> ("," <expression>)*
+              | ε
+
+<list> ::= "[" <elements> "]"
+
+<elements> ::= <expression> ("," <expression>)*
+             | ε
+
+<if-statement> ::= "if" <expression> "{" <statement>* "}" <else-clause>
+
+<else-clause> ::= "else" "{" <statement>* "}"
+                | ε
+
+<for-loop> ::= "for" "let" <identifier> "in" <expression> "{" <statement>* "}"
+
+<while-loop> ::= "while" <expression> "{" <statement>* "}"
+
+<print-statement> ::= "println" "(" <expression> ")"
+
+<literal> ::= <integer>
+            | <string>
+            | <boolean>
+            | <float>
+
+<operator> ::= "+" | "-" | "*" | "/" | "%" | ">=" | "<=" | ">" | "<" | "=="
+
+<identifier> ::= <letter> (<letter> | <digit>)*
+
+<integer> ::= <digit>+
+
+<float> ::= <digit>+ "." <digit>+
+
+<string> ::= "\"" <any-character>* "\""
+
+<boolean> ::= "true" | "false"
+
+<digit> ::= [0-9]
+
+<letter> ::= [a-zA-Z]
+
+<any-character> ::= <letter> | <digit> | <any-other-character>
