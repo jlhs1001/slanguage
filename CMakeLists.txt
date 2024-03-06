@@ -10,4 +10,6 @@ add_executable(slang compiler/main.cpp
         compiler/Lexer/Lexer.cpp
         compiler/lexer/Utils.h
         compiler/lexer/Utils.cpp
-        compiler/lexer/Token.h)
+        compiler/lexer/Token.h
+        compiler/parser/Parser.h
+        compiler/parser/Parser.cpp)

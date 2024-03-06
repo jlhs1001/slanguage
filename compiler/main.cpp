@@ -93,9 +93,12 @@ int main() {
 //    lexer.advance();
 
 //    std::cout << *lexer.current << std::endl;
-    std::cout << getTokenTypeName(lexer.getNextToken().type) << std::endl;
-    std::cout << getTokenTypeName(lexer.getNextToken().type) << std::endl;
-    std::cout << getTokenTypeName(lexer.getNextToken().type) << std::endl;
+
+    Token tk = lexer.getNextToken();
+    while (tk.type != TokenType::END_OF_FILE) {
+        std::cout << getTokenTypeName(tk.type) << std::endl;
+        tk = lexer.getNextToken();
+    }
 
     std::cout << lexer.source << std::endl;
 }

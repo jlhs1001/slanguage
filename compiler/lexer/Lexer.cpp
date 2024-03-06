@@ -152,6 +152,42 @@ Token Lexer::getNextToken() {
     }
 
     // Lex single-character tokens
+    switch (c) {
+        case '(':
+            return makeToken(TokenType::LEFT_PAREN);
+        case ')':
+            return makeToken(TokenType::RIGHT_PAREN);
+        case '{':
+            return makeToken(TokenType::LEFT_BRACE);
+        case '}':
+            return makeToken(TokenType::RIGHT_BRACE);
+        case ',':
+            return makeToken(TokenType::COMMA);
+        case '.':
+            return makeToken(TokenType::DOT);
+        case '-':
+            return makeToken(TokenType::MINUS);
+        case '+':
+            return makeToken(TokenType::PLUS);
+        case ';':
+            return makeToken(TokenType::SEMICOLON);
+        case '*':
+            return makeToken(TokenType::STAR);
+        case '!':
+            return makeToken(match('=') ? TokenType::BANG_EQUAL : TokenType::BANG);
+        case '=':
+            return makeToken(match('=') ? TokenType::EQUAL_EQUAL : TokenType::EQUAL);
+        case '<':
+            return makeToken(match('=') ? TokenType::LESS_EQUAL : TokenType::LESS);
+        case '>':
+            return makeToken(match('=') ? TokenType::GREATER_EQUAL : TokenType::GREATER);
+        case '/':
+            return makeToken(TokenType::SLASH);
+        case '"':
+            return string();
+        default:
+            break;
+    }
 }
 
 TokenType Lexer::identifierType() {
@@ -219,6 +255,21 @@ TokenType Lexer::identifierType() {
     }
 
     return TokenType::IDENTIFIER;
+}
+
+Token Lexer::string() {
+    while (peek() != '"' && !IS_EOF(peek())) {
+        if (peek() == '\n') line++;
+        advance();
+    }
+
+    if (IS_EOF(peek())) {
+        std::cerr << "Unterminated string at line " << line << std::endl;
+        return makeToken(TokenType::END_OF_FILE);
+    }
+
+    advance();
+    return makeToken(TokenType::STRING);
 }
 
 TokenType Lexer::checkKeyword(int start, int length, const std::string &rest, TokenType type) {

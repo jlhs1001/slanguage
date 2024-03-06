@@ -108,6 +108,7 @@ private:
     );
 
     TokenType identifierType();
+    Token string();
 };
 
 
