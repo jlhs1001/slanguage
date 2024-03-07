@@ -5,6 +5,7 @@
 #include "Parser.h"
 #include "expression/BinaryExpressionNode.h"
 #include "statement/PrintNode.h"
+#include "IRGenerator.h"
 #include <iostream>
 #include <string>
 
@@ -225,7 +226,12 @@ void Parser::parse() {
 //    auto node = expression();
 //    print_binary_expression_node(*dynamic_cast<BinaryExpressionNode *>(node.get()));
     ExpressionPrinter printer;
+    IRGenerator irGenerator;
+//    irGenerator.initializeContext();
 //    node->accept(&printer);
+
+    // TODO: Make the IR generator generate incrementally.
+    //  And move the IR generator outside of this function.
 
     auto node = program();
 
@@ -233,8 +239,11 @@ void Parser::parse() {
 
     for (auto &statement : node->statements) {
         statement->accept(&printer);
+        statement->accept(&irGenerator);
         std::cout << std::endl;
     }
+
+    irGenerator.logModule();
 
 //    expression();
 //    program();
