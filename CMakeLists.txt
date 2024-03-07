@@ -26,4 +26,6 @@ add_executable(slang compiler/main.cpp
         compiler/ast/NodeVisitor.h
         compiler/ast/NodeVisitor.cpp
         compiler/ast/expression/UnaryExpressionNode.h
-        compiler/ast/expression/UnaryExpressionNode.cpp)
+        compiler/ast/expression/UnaryExpressionNode.cpp
+        compiler/ast/statement/PrintNode.h
+        compiler/ast/statement/PrintNode.cpp)

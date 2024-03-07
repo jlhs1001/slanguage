@@ -10,27 +10,16 @@
 
 class ProgramNode {
 public:
-    std::vector<StatementNode *> statements;
+    std::vector<std::unique_ptr<StatementNode>> statements;
 
-    void codegen() {
-        for (auto &statement : statements) {
-            statement->codegen();
-        }
-    }
+//    virtual ~ProgramNode() {
+//        for (auto &statement: statements) {
+//            delete statement;
+//        }
+//    }
 
-    void print() {
-        for (auto &statement : statements) {
-            statement->print();
-        }
-    }
-
-    virtual ~ProgramNode() {
-        for (auto &statement : statements) {
-            delete statement;
-        }
-    }
 public:
-    ProgramNode(std::vector<StatementNode *> statements) : statements(statements) {}
+    ProgramNode(std::vector<std::unique_ptr<StatementNode>> statements) : statements(std::move(statements)) {}
 };
 
 

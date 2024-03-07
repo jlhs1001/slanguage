@@ -23,8 +23,8 @@ private:
     void consume(); // Consume function
     void match(TokenType type); // Match function
 
-    ProgramNode program(); // Program function
-    StatementNode statement(); // Statement function
+    std::unique_ptr<ProgramNode> program(); // Program function
+    std::unique_ptr<StatementNode> statement(); // Statement function
 
     std::unique_ptr<ExpressionNode> expression(); // Expression function
     std::unique_ptr<ExpressionNode> term(); // Term function

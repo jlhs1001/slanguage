@@ -10,6 +10,7 @@ class NumberNode;
 class BinaryExpressionNode;
 class UnaryExpressionNode;
 class ProgramNode;
+class PrintNode;
 
 class NodeVisitor {
 public:
@@ -18,6 +19,7 @@ public:
     virtual void visit(BinaryExpressionNode* node) = 0;
     virtual void visit(UnaryExpressionNode* node) = 0;
     virtual void visit(ProgramNode* node) = 0;
+    virtual void visit(PrintNode* node) = 0;
 };
 
 

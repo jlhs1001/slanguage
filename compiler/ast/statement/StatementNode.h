@@ -8,11 +8,8 @@
 
 class StatementNode {
 public:
-    virtual void codegen() = 0;
-    virtual void print() = 0;
     virtual ~StatementNode() = default;
-
-    StatementNode() = default;
+    virtual void accept(class NodeVisitor* visitor) = 0;
 };
 
 

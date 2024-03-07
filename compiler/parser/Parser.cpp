@@ -4,6 +4,7 @@
 
 #include "Parser.h"
 #include "expression/BinaryExpressionNode.h"
+#include "statement/PrintNode.h"
 #include <iostream>
 #include <string>
 
@@ -23,6 +24,16 @@ void Parser::match(TokenType type) {
     } else {
         error("Unexpected token");
     }
+}
+
+std::unique_ptr<ProgramNode> Parser::program() {
+    std::vector<std::unique_ptr<StatementNode>> statements;
+
+    while (currentToken.type != TokenType::END_OF_FILE) {
+        statements.push_back(statement());
+    }
+
+    return std::make_unique<ProgramNode>(std::move(statements));
 }
 
 std::unique_ptr<ExpressionNode> Parser::expression() {
@@ -190,14 +201,40 @@ public:
     void visit(ExpressionNode* node) override {
         std::cout << "ExpressionNode";
     }
+
+    void visit(PrintNode* node) override {
+        std::cout << "PrintNode";
+        node->expression->accept(this);
+    }
 };
 
+std::unique_ptr<StatementNode> Parser::statement() {
+    if (currentToken.type == TokenType::PRINTLN) {
+        consume();
+        match(TokenType::LEFT_PAREN);
+        auto expressionNode = expression();
+        match(TokenType::RIGHT_PAREN);
+        return std::make_unique<PrintNode>(std::move(expressionNode));
+    }
+
+    error("Invalid statement");
+    return nullptr; // This is just to satisfy the compiler; error() should throw an exception
+}
+
 void Parser::parse() {
-    auto node = expression();
+//    auto node = expression();
 //    print_binary_expression_node(*dynamic_cast<BinaryExpressionNode *>(node.get()));
     ExpressionPrinter printer;
-    node->accept(&printer);
-    std::cout << std::endl;
+//    node->accept(&printer);
+
+    auto node = program();
+
+//    std::cout << node->statements.size() << std::endl;
+
+    for (auto &statement : node->statements) {
+        statement->accept(&printer);
+        std::cout << std::endl;
+    }
 
 //    expression();
 //    program();
