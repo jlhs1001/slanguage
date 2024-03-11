@@ -32,6 +32,48 @@ class IRGenerator : public NodeVisitor {
     llvm::Function *function;
     llvm::BasicBlock *entry;
 
+    // create a printf prototype
+    llvm::Function *PrintfFunc;
+
+    // this is here only temporarily.
+    // TODO: Move this to a more appropriate location
+    llvm::Function *getPrintfPrototype() {
+        // Function Prototype for printf
+        std::vector<llvm::Type *> printfArgs = {builder->getInt8Ty()->getPointerTo()};
+        auto printfType = llvm::FunctionType::get(builder->getInt32Ty(), printfArgs, true);
+        return llvm::Function::Create(printfType, llvm::Function::ExternalLinkage, "println", module.get());
+    }
+
+//    // Utility to create a call to printf
+//    void printf(const char *format, std::vector<llvm::Value *> args) {
+//        auto formatStr = builder->CreateGlobalStringPtr(format);
+//        std::vector<llvm::Value *> finalArgs = {formatStr};
+//        finalArgs.insert(finalArgs.end(), args.begin(), args.end());
+//        builder->CreateCall(PrintfFunc, finalArgs);
+//    }
+
+    // General printf function
+    void printf(const char *format, std::vector<llvm::Value *> args) {
+        auto formatStr = builder->CreateGlobalStringPtr(format);
+        std::vector<llvm::Value *> finalArgs = {formatStr};
+        finalArgs.insert(finalArgs.end(), args.begin(), args.end());
+        builder->CreateCall(PrintfFunc, finalArgs);
+    }
+
+    // Overloaded printf specifically for double values
+    void printf(double value) {
+        auto formatStr = builder->CreateGlobalStringPtr("%f\n");
+
+        // Correctly create a double value constant within the LLVM context
+        auto doubleType = llvm::Type::getDoubleTy(*context); // Ensure the context is dereferenced if it's a pointer
+        auto doubleValue = llvm::ConstantFP::get(doubleType, value);
+
+        builder->CreateCall(PrintfFunc, {
+                formatStr,
+                builder->CreateFPCast(doubleValue, doubleType) // Ensure the cast is to the correct double type
+        });
+    }
+
     llvm::Value *lastValue = nullptr;
 
 public:
@@ -48,24 +90,29 @@ public:
         entry = llvm::BasicBlock::Create(*context, "entry", function);
         builder->SetInsertPoint(entry);
 
-        // Define two integer constants
-        llvm::Value *val1 = llvm::ConstantInt::get(*context, llvm::APInt(32, 5));
-        llvm::Value *val2 = llvm::ConstantInt::get(*context, llvm::APInt(32, 3));
+//        // Define two integer constants
+//        llvm::Value *val1 = llvm::ConstantInt::get(*context, llvm::APInt(32, 5));
+//        llvm::Value *val2 = llvm::ConstantInt::get(*context, llvm::APInt(32, 3));
+//
+//        // Perform an addition operation
+//        llvm::Value *sum = builder->CreateAdd(val1, val2, "sum");
+//
+//        // Adjusted to return the sum
+//        builder->CreateRet(sum);
 
-        // Perform an addition operation
-        llvm::Value *sum = builder->CreateAdd(val1, val2, "sum");
-
-        // Adjusted to return the sum
-        builder->CreateRet(sum);
+        // Initialize printf prototype
+        std::vector<llvm::Type *> printfArgs = {builder->getInt8Ty()->getPointerTo()};
+        auto printfType = llvm::FunctionType::get(builder->getInt32Ty(), printfArgs, true);
+        PrintfFunc = llvm::Function::Create(printfType, llvm::Function::ExternalLinkage, "println", module.get());
 
         // Print out the module IR to stdout
-        module->print(llvm::outs(), nullptr);
+//        module->print(llvm::outs(), nullptr);
     }
 
 
     // temp function
     void logModule() {
-//        module->print(llvm::outs(), nullptr);
+        module->print(llvm::outs(), nullptr);
     }
 
 public:

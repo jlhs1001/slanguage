@@ -10,6 +10,12 @@ void IRGenerator::visit(ProgramNode *node) {
 
 void IRGenerator::visit(PrintNode *node) {
     node->expression->accept(this);
+
+    llvm::Value *value = lastValue;
+
+    // current implementation assumes doubles
+    auto formatStr = builder->CreateGlobalStringPtr("%d\n");
+    builder->CreateCall(PrintfFunc, {formatStr, value});
 }
 
 void IRGenerator::visit(NumberNode *node) {
